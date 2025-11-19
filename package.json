@@ -1,19 +1,19 @@
 {
-  "name": "homebridge-plugin-name",
-  "displayName": "Plugin Name",
+  "name": "homebridge-api-state-switch",
+  "displayName": "Homebridge API State Switch",
   "type": "module",
   "version": "1.0.0",
   "private": true,
-  "description": "A short description about what your plugin does.",
-  "author": "Your Name",
+  "description": "A Homebridge plugin that exposes virtual switches whose state is controlled entirely by polling an API endpoint.",
+  "author": "Tom Alderson",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/USERNAME/GITHUB_PROJECT_NAME#readme",
+  "homepage": "https://github.com/TomAldy/homebridge-api-state-switch",
   "repository": {
     "type": "git",
-    "url": "https://github.com/USERNAME/GITHUB_PROJECT_NAME.git"
+    "url": "https://github.com/TomAldy/homebridge-api-state-switch.git"
   },
   "bugs": {
-    "url": "https://github.com/USERNAME/GITHUB_PROJECT_NAME/issues"
+    "url": "https://github.com/TomAldy/homebridge-api-state-switch/issues"
   },
   "keywords": [
     "homebridge-plugin"
@@ -30,6 +30,7 @@
     "watch": "npm run build && npm link && nodemon"
   },
   "dependencies": {
+    "axios": "^1.13.2",
     "homebridge-lib": "^7.1.12"
   },
   "devDependencies": {

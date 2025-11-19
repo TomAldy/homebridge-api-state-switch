@@ -1,215 +1,211 @@
-<p align="center">
-
-<img src="https://github.com/homebridge/branding/raw/latest/logos/homebridge-wordmark-logo-vertical.png" width="150">
-
-</p>
-
 <span align="center">
 
-# Homebridge Platform Plugin Template
+# 🔌 ⚡ homebridge-api-state-switch
+Create virtual HomeKit switches whose ON/OFF state is controlled entirely by polling an API endpoint.
 
 </span>
 
-> [!IMPORTANT]
-> **Homebridge v2.0 Information**
->
-> This template currently has a
-> - `package.json -> engines.homebridge` value of `"^1.8.0 || ^2.0.0-beta.0"`
-> - `package.json -> devDependencies.homebridge` value of `"^2.0.0-beta.0"`
->
-> This is to ensure that your plugin will build and run on both Homebridge v1 and v2.
->
-> Once Homebridge v2.0 has been released, you can remove the `-beta.0` in both places.
+---
+This Homebridge plugin lets you expose **virtual switches** that automatically flip ON or OFF based on the results of a **GET request** to **any HTTP API**.
+
+It's perfect for things like:
+
+- 🗑️ Bin day reminders
+- 📅 “Is today a holiday?”
+- 🌦️ “Is it raining right now?”
+- 🚗 “Is the car charging?”
+- 🖥️ “Is this server online?”
+- 🧹 “Is the robot vacuum currently cleaning?”
+- 🛏️ Presence / status switches
+- 🌡️ Custom sensor states from any backend you build
+
+You write the API → Homebridge polls it → HomeKit gets a virtual switch with real-time state.
+
+No control endpoints required.  
+No devices needed.  
+Just pure API → Switch state binding.
 
 ---
 
-This is a template Homebridge dynamic platform plugin and can be used as a base to help you get started developing your own plugin.
+## ✨ Features
 
-This template should be used in conjunction with the [developer documentation](https://developers.homebridge.io/). A full list of all supported service types, and their characteristics is available on this site.
+- Polls any HTTP GET endpoint on an interval
+- Converts API responses into HomeKit switch ON/OFF state
+- Optional `jsonPath` to extract boolean values from JSON
+- Optionally **read-only** (user cannot toggle the switch)
+- Supports multiple switches
+- Works with Siri, automations, scenes, widgets
+- Designed using the latest official Homebridge plugin template
+- Lightweight & fast — no cloud dependencies
 
-### Clone As Template
+---
 
-Click the link below to create a new GitHub Repository using this template, or click the *Use This Template* button above.
+## 📦 Installation
 
-<span align="center">
+### Through Homebridge UI (recommended)
 
-### [Create New Repository From Template](https://github.com/homebridge/homebridge-plugin-template/generate)
+1. Open **Homebridge Config UI X**
+2. Go to **Plugins**
+3. Search for:  
+   **`homebridge-api-state-switch`**
+4. Install
+5. Restart Homebridge
 
-</span>
+---
 
-### Setup Development Environment
+## ⚙️ Configuration
 
-To develop Homebridge plugins you must have Node.js 20 or later installed, and a modern code editor such as [VS Code](https://code.visualstudio.com/). This plugin template uses [TypeScript](https://www.typescriptlang.org/) to make development easier and comes with pre-configured settings for [VS Code](https://code.visualstudio.com/) and ESLint. If you are using VS Code install these extensions:
+Add this to your `config.json` (or use the UI settings panel):
 
-- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-
-### Install Development Dependencies
-
-Using a terminal, navigate to the project folder and run this command to install the development dependencies:
-
-```shell
-npm install
-```
-
-### Update package.json
-
-Open the [`package.json`](./package.json) and change the following attributes:
-
-- `name` - this should be prefixed with `homebridge-` or `@username/homebridge-`, is case-sensitive, and contains no spaces nor special characters apart from a dash `-`
-- `displayName` - this is the "nice" name displayed in the Homebridge UI
-- `homepage` - link to your GitHub repo's `README.md`
-- `repository.url` - link to your GitHub repo
-- `bugs.url` - link to your GitHub repo issues page
-
-When you are ready to publish the plugin you should set `private` to false, or remove the attribute entirely.
-
-### Update Plugin Defaults
-
-Open the [`src/settings.ts`](./src/settings.ts) file and change the default values:
-
-- `PLATFORM_NAME` - Set this to be the name of your platform. This is the name of the platform that users will use to register the plugin in the Homebridge `config.json`.
-- `PLUGIN_NAME` - Set this to be the same name you set in the [`package.json`](./package.json) file.
-
-Open the [`config.schema.json`](./config.schema.json) file and change the following attribute:
-
-- `pluginAlias` - set this to match the `PLATFORM_NAME` you defined in the previous step.
-
-See the [Homebridge API docs](https://developers.homebridge.io/#/config-schema#default-values) for more details on the other attributes you can set in the `config.schema.json` file.
-
-### Build Plugin
-
-TypeScript needs to be compiled into JavaScript before it can run. The following command will compile the contents of your [`src`](./src) directory and put the resulting code into the `dist` folder.
-
-```shell
-npm run build
-```
-
-### Link To Homebridge
-
-Run this command so your global installation of Homebridge can discover the plugin in your development environment:
-
-```shell
-npm link
-```
-
-You can now start Homebridge, use the `-D` flag, so you can see debug log messages in your plugin:
-
-```shell
-homebridge -D
-```
-
-### Watch For Changes and Build Automatically
-
-If you want to have your code compile automatically as you make changes, and restart Homebridge automatically between changes, you first need to add your plugin as a platform in `./test/hbConfig/config.json`:
-```
+```json
 {
-...
-    "platforms": [
-        {
-            "name": "Config",
-            "port": 8581,
-            "platform": "config"
-        },
-        {
-            "name": "<PLUGIN_NAME>",
-            //... any other options, as listed in config.schema.json ...
-            "platform": "<PLATFORM_NAME>"
-        }
-    ]
+  "platform": "ApiStateSwitchPlatform",
+  "switches": [
+    {
+      "name": "Bin Day",
+      "url": "https://my-api.dev/bins/today",
+      "jsonPath": "today.isBinDay",
+      "interval": 3600,
+      "readOnly": true
+    }
+  ]
 }
 ```
 
-and then you can run:
+### Field Breakdown
 
-```shell
-npm run watch
+| Field        | Type    | Required | Description |
+|--------------|---------|----------|-------------|
+| `name`       | string  | Yes      | The HomeKit switch name. |
+| `url`        | string  | Yes      | GET endpoint to poll for state. |
+| `jsonPath`   | string  | No       | Dot-notation path inside JSON to extract a boolean (e.g. `today.isBinDay`). |
+| `interval`   | number  | Yes      | Polling interval in **seconds**. |
+| `readOnly`   | boolean | No       | Prevents the user toggling the switch in HomeKit (default: true). |
+
+---
+
+## 🧠 How It Works
+
+Every `interval` seconds:
+
+1. The plugin sends a **GET request** to the configured `url`.
+2. If a `jsonPath` is provided, that nested value is extracted using dot-notation  
+   Example response:
+   ```json
+   { "today": { "isBinDay": true } }
+
+With jsonPath: `today.isBinDay` → the switch becomes ON.
+
+---
+
+You can then build automations like:
+- “When Bin Day turns ON → send a notification”
+- “When Server Offline switch turns ON → flash a light”
+- “When Rain switch turns ON → close the skylight”
+
+---
+
+### 🧪 Example API Responses
+
+**Simple boolean**
+
+```true```
+
+**JSON response**
+
+```json
+{
+    "today": {
+        "isBinDay": true
+    }
+}
 ```
 
-This will launch an instance of Homebridge in debug mode which will restart every time you make a change to the source code. It will load the config stored in the default location under `~/.homebridge`. You may need to stop other running instances of Homebridge while using this command to prevent conflicts. You can adjust the Homebridge startup command in the [`nodemon.json`](./nodemon.json) file.
+**Nested extraction**
 
-### Customise Plugin
+Config:
 
-You can now start customising the plugin template to suit your requirements.
-
-- [`src/platform.ts`](./src/platform.ts) - this is where your device setup and discovery should go.
-- [`src/platformAccessory.ts`](./src/platformAccessory.ts) - this is where your accessory control logic should go, you can rename or create multiple instances of this file for each accessory type you need to implement as part of your platform plugin. You can refer to the [developer documentation](https://developers.homebridge.io/) to see what characteristics you need to implement for each service type.
-- [`config.schema.json`](./config.schema.json) - update the config schema to match the config you expect from the user. See the [Plugin Config Schema Documentation](https://developers.homebridge.io/#/config-schema).
-
-### Versioning Your Plugin
-
-Given a version number `MAJOR`.`MINOR`.`PATCH`, such as `1.4.3`, increment the:
-
-1. **MAJOR** version when you make breaking changes to your plugin,
-2. **MINOR** version when you add functionality in a backwards compatible manner, and
-3. **PATCH** version when you make backwards compatible bug fixes.
-
-You can use the `npm version` command to help you with this:
-
-```shell
-# major update / breaking changes
-npm version major
-
-# minor update / new features
-npm version update
-
-# patch / bugfixes
-npm version patch
+```
+"jsonPath": "today.isBinDay"
 ```
 
-### Publish Package
 
-When you are ready to publish your plugin to [npm](https://www.npmjs.com/), make sure you have removed the `private` attribute from the [`package.json`](./package.json) file then run:
+---
 
-```shell
-npm publish
+### **🛠 Example: Minimal test API (Node.js)**
+
+```javascript
+import express from "express";
+const app = express();
+
+app.get("/bins/today", (req, res) => {
+res.json({ today: { isBinDay: new Date().getDay() === 2 } }); // Tuesday
+});
+
+app.listen(3000, () => console.log("Test API running on port 3000"));
 ```
 
-If you are publishing a scoped plugin, i.e. `@username/homebridge-xxx` you will need to add `--access=public` to command the first time you publish.
+Run:
 
-#### Publishing Beta Versions
-
-You can publish *beta* versions of your plugin for other users to test before you release it to everyone.
-
-```shell
-# create a new pre-release version (eg. 2.1.0-beta.1)
-npm version prepatch --preid beta
-
-# publish to @beta
-npm publish --tag beta
+```bash
+node server.js
 ```
 
-Users can then install the  *beta* version by appending `@beta` to the install command, for example:
+Use this in your plugin config:
 
-```shell
-sudo npm install -g homebridge-example-plugin@beta
+```
+http://localhost:3000/bins/today
 ```
 
-### Best Practices
 
-Consider creating your plugin with the [Homebridge Verified](https://github.com/homebridge/verified) criteria in mind. This will help you to create a plugin that is easy to use and works well with Homebridge.
-You can then submit your plugin to the Homebridge Verified list for review.
-The most up-to-date criteria can be found [here](https://github.com/homebridge/verified#requirements).
-For reference, the current criteria are:
+---
 
-- **General**
-  - The plugin must be of type [dynamic platform](https://developers.homebridge.io/#/#dynamic-platform-template).
-  - The plugin must not offer the same nor less functionality than that of any existing **verified** plugin.
-- **Repo**
-  - The plugin must be published to NPM and the source code available on a GitHub repository, with issues enabled.
-  - A GitHub release should be created for every new version of your plugin, with release notes.
-- **Environment**
-  - The plugin must run on all [supported LTS versions of Node.js](https://github.com/homebridge/homebridge/wiki/How-To-Update-Node.js), at the time of writing this is Node v18, v20 and v22.
-  - The plugin must successfully install and not start unless it is configured.
-  - The plugin must not execute post-install scripts that modify the users' system in any way.
-  - The plugin must not require the user to run Homebridge in a TTY or with non-standard startup parameters, even for initial configuration.
-- **Codebase**
-  - The plugin must implement the [Homebridge Plugin Settings GUI](https://developers.homebridge.io/#/config-schema).
-  - The plugin must not contain any analytics or calls that enable you to track the user.
-  - If the plugin needs to write files to disk (cache, keys, etc.), it must store them inside the Homebridge storage directory.
-  - The plugin must not throw unhandled exceptions, the plugin must catch and log its own errors.
+## **🔒 Security Notes**
 
-### Useful Links
+- Only GET requests are supported currently.
+- HTTPS is strongly recommended.
+- If your API requires headers or tokens, support is planned for a future release.
 
-Note these links are here for help but are not supported/verified by the Homebridge team
+---
 
-- [Custom Characteristics](https://github.com/homebridge/homebridge-plugin-template/issues/20)
+## **🐞 Debugging**
+
+Enable debug logs in Homebridge UI.
+
+You’ll see logs like:
+
+```
+Updated "Bin Day" → true
+```
+
+Or errors like:
+
+```
+Polling failed for "Bin Day": Request failed with status 500
+```
+
+---
+
+## **🔧 Roadmap**
+
+**Planned / potential features:**
+- Custom headers / bearer token support
+- Cron-style polling
+- ContactSensor / OccupancySensor support
+- Multiple boolean outputs from a single endpoint
+- Retry / backoff strategies
+- Webhook-triggered updates (instead of polling)
+
+---
+
+## **🤝 Contributing**
+
+Issues and pull requests are welcome.
+
+If you’d like to extend functionality (headers, cron, service types, richer parsing, etc.), feel free to open an issue or PR.
+
+---
+
+## **📜 License**
+
+MIT

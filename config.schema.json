@@ -1,17 +1,41 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
+  "pluginAlias": "ApiStateSwitchPlatform",
   "pluginType": "platform",
-  "singular": true,
-  "strictValidation": false,
+  "headerDisplay": "Create virtual switches whose state is driven by API responses.",
   "schema": {
     "type": "object",
-    "required": ["name"],
-    "additionalProperties": false,
     "properties": {
-      "name": {
-        "title": "Name",
-        "type": "string",
-        "default": "Example Dynamic Platform"
+      "switches": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["name", "url", "interval"],
+          "properties": {
+            "name": {
+              "type": "string",
+              "title": "Switch Name"
+            },
+            "url": {
+              "type": "string",
+              "title": "API Endpoint URL"
+            },
+            "jsonPath": {
+              "type": "string",
+              "title": "JSON Path to boolean",
+              "description": "Optional. For example: 'bin.today'. Must resolve to true/false."
+            },
+            "interval": {
+              "type": "number",
+              "title": "Polling Interval (seconds)",
+              "default": 3600
+            },
+            "readOnly": {
+              "type": "boolean",
+              "title": "Disable user toggle",
+              "default": true
+            }
+          }
+        }
       }
     }
   }
