@@ -26,7 +26,7 @@ export class ApiStatePlatformAccessory {
         // ───────────────────────────────────────────────────────────────
         //
         this.accessory.getService(this.platform.Service.AccessoryInformation)!
-          .setCharacteristic(this.platform.Characteristic.Manufacturer, 'DevItUp')
+          .setCharacteristic(this.platform.Characteristic.Manufacturer, 'TomAldy')
           .setCharacteristic(this.platform.Characteristic.Model, 'API State Switch')
           .setCharacteristic(this.platform.Characteristic.SerialNumber, config.name);
 
