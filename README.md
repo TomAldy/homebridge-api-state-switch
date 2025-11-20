@@ -1,9 +1,22 @@
-<span align="center">
+<div align="center">
 
 # 🔌 ⚡ homebridge-api-state-switch
 Create virtual HomeKit switches whose ON/OFF state is controlled entirely by polling an API endpoint.
 
-</span>
+</div>
+
+<p align="center">
+  <img src="https://github.com/tomaldy/homebridge-api-state-switch/actions/workflows/release.yml/badge.svg" alt="Build Status" />
+  <img src="https://img.shields.io/npm/v/homebridge-api-state-switch.svg" alt="npm version" />
+  <img src="https://img.shields.io/npm/dm/homebridge-api-state-switch.svg" alt="npm downloads" />
+  <img src="https://img.shields.io/github/license/tomaldy/homebridge-api-state-switch.svg" alt="License" />
+</p>
+
+<p align="center">
+  <a href="https://buymeacoffee.com/tomaldy" target="_blank">
+    <img src="https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=&slug=tomaldy&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" alt="Buy Me A Coffee" />
+  </a>
+</p>
 
 ---
 This Homebridge plugin lets you expose **virtual switches** that automatically flip ON or OFF based on the results of a **GET request** to **any HTTP API**.

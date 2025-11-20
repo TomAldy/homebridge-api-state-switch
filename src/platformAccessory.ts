@@ -2,6 +2,7 @@ import type { CharacteristicValue, PlatformAccessory, Service } from 'homebridge
 import axios from 'axios';
 
 import type { ApiStateSwitchPlatform } from './platform.js';
+import { getJsonValue } from './utils/getJsonValue.js';
 
 /**
  * ApiStatePlatformAccessory
@@ -107,7 +108,7 @@ export class ApiStatePlatformAccessory {
         let state = false;
 
         if (config.jsonPath) {
-          state = this.resolveJsonPath(response.data, config.jsonPath);
+          state = getJsonValue(response.data, config.jsonPath);
         } else {
           // If JSON path not used, try interpreting direct body
           state =
@@ -135,26 +136,5 @@ export class ApiStatePlatformAccessory {
 
     // Start repeating timer
     this.pollingTimer = setInterval(poll, intervalMs);
-  }
-
-  /**
-     * Resolve a dot-separated JSON path like "today.isBinDay".
-     */
-  resolveJsonPath(obj: unknown, path: string): boolean {
-    try {
-      let value: unknown = false;
-      value = path
-        .split('.')
-        .reduce((acc: unknown, key: string) => {
-          if (acc !== null && typeof acc === 'object' && key in acc) {
-            return (acc as Record<string, unknown>)[key];
-          }
-          return undefined;
-        }, obj);
-
-      return Boolean(value);
-    } catch {
-      return false;
-    }
   }
 }
