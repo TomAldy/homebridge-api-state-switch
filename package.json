@@ -3,7 +3,6 @@
   "displayName": "Homebridge API State Switch",
   "type": "module",
   "version": "1.0.0",
-  "private": true,
   "description": "A Homebridge plugin that exposes virtual switches whose state is controlled entirely by polling an API endpoint.",
   "author": "Tom Alderson",
   "license": "Apache-2.0",
