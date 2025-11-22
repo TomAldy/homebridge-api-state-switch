@@ -1,7 +1,7 @@
 /**
  * Resolve a dot-separated JSON path like "today.isBinDay".
  */
-export function getJsonValue(obj: unknown, path: string): boolean {
+export function getApiJsonResponseAsBoolean(obj: unknown, path: string): boolean {
   try {
     let value: unknown = false;
     value = path

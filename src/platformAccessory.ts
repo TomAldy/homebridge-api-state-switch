@@ -2,7 +2,7 @@ import type { CharacteristicValue, PlatformAccessory, Service } from 'homebridge
 import axios from 'axios';
 
 import type { ApiStateSwitchPlatform } from './platform.js';
-import { getJsonValue } from './utils/getJsonValue.js';
+import { getApiJsonResponseAsBoolean } from './utils/getApiJsonResponseAsBoolean.js';
 
 /**
  * ApiStatePlatformAccessory
@@ -108,7 +108,7 @@ export class ApiStatePlatformAccessory {
         let state = false;
 
         if (config.jsonPath) {
-          state = getJsonValue(response.data, config.jsonPath);
+          state = getApiJsonResponseAsBoolean(response.data, config.jsonPath);
         } else {
           // If JSON path not used, try interpreting direct body
           state =
