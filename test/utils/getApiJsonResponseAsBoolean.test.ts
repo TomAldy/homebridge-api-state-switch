@@ -7,11 +7,11 @@ describe('getJsonValue (boolean JSON path resolver)', () => {
         value: true,
         label: 'ON',
       },
-      temperature: 0
+      temperature: 0,
     },
     meta: {
       device: {
-        id: 'abc-123',
+        id: 'abc-1234',
         active: false,
       },
     },
